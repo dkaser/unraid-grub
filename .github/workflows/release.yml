@@ -1,0 +1,31 @@
+name: Release
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        run: |
+          sudo apt install -y grub-common grub-pc
+          cd src
+          ./build.sh
+          sha256sum BOOTX64.EFI | awk '{print $1}' > BOOTX64.EFI.sha256
+          echo "checksum=$(cat BOOTX64.EFI.sha256)" >> $GITHUB_OUTPUT
+          ls
+
+      - uses: shogo82148/actions-upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: src/BOOTX64.EFI
+
+      - name: Add checksum to release description
+        uses: djn24/add-comment-to-release@v1
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+          comment: |-
+            BOOTX64.EFI : ${{ steps.build.outputs.checksum }}

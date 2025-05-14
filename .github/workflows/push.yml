@@ -1,0 +1,25 @@
+name: Build Image
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: |
+          sudo apt install -y grub-common grub-pc
+          cd src
+          ./build.sh
+          ls
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: BOOTX64.EFI
+          path: |
+            src/BOOTX64.EFI
