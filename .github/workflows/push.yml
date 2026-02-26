@@ -18,7 +18,7 @@ jobs:
           ./build.sh
           ls
       - name: Upload
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: BOOTX64.EFI
           path: |
